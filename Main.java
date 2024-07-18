@@ -26,8 +26,31 @@ class Main {
     // please implement algorithm for mean value of all given nodes
     // each node has own value and sub-nodes of the same structure,
     // mean value should be calculated across all values in the tree
-    return 0.0;
+    CountAndSum result = getCountAndSum(nodes, 1.0);
+    return result.sum / result.count;
   }
+
+  public static CountAndSum getCountAndSum(List<Node> nodes, double coef) {
+    int count = 0;
+    double sum = 0.0;
+
+    if (nodes != null) {
+      for (Node n : nodes) {
+        count++;
+        sum += n.getValue();
+
+        if (n.getNodes() != null && !n.getNodes().isEmpty()) {
+          CountAndSum cas = getCountAndSum(n.getNodes(), coef);
+          count += cas.count;
+          sum += coef * cas.sum;
+        }
+      }
+    }
+
+    return new CountAndSum(count, sum);
+  }
+
+  public record CountAndSum(int count, double sum) {}
 
   // builders
 
