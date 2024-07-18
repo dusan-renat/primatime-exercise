@@ -1,6 +1,4 @@
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 
 class Main {
   public static void main(String[] args) {
@@ -26,8 +24,38 @@ class Main {
     // please implement algorithm for mean value of all given nodes
     // each node has own value and sub-nodes of the same structure,
     // mean value should be calculated across all values in the tree
-    return 0.0;
+    return getMeanValue(nodes, 1.0);
   }
+
+  public static double getMeanValue(List<Node> nodes, double coef) {
+    int count = 0;
+    double sum = 0.0;
+
+    if (nodes != null) {
+      Queue<NodeAndDepth> queue = new LinkedList<>();
+
+      nodes
+              .stream()
+              .map( n -> new NodeAndDepth(n, 0))
+              .forEach(queue::add);
+
+      while (!queue.isEmpty()) {
+        NodeAndDepth nad = queue.poll();
+        count++;
+        sum += nad.node.getValue() * Math.pow(coef, nad.depth);
+
+        if (nad.node.getNodes() != null) {
+          for (Node n : nad.node.getNodes()) {
+            queue.add(new NodeAndDepth(n, nad.depth + 1));
+          }
+        }
+      }
+    }
+
+    return sum / count;
+  }
+
+  public record NodeAndDepth(Node node, int depth) {}
 
   // builders
 
